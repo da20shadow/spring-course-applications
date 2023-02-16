@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="~{fragments/head}"></th:block>
+    <title>Home</title>
+</head>
+<body>
+
+   <th:block th:include="~{fragments/navigation}"></th:block>
+
+<main>
+    <h1 class="text-center">Home</h1>
+    <a class="center block" href="/auth/register">
+        <button>Register</button>
+    </a>
+</main>
+
+<th:block th:include="~{fragments/footer}"></th:block>
+
+</body>
+</html>

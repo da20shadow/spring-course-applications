@@ -1,0 +1,15 @@
+<th:block th:fragments>
+    <footer>
+        <div id="alert" class="notification" th:if="${error}">
+            <span th:text="${error}"></span>
+            <span onclick="closeNotification()" class="close">x</span>
+        </div>
+        <p>&copy; Copyright 2023 da20shadow</p>
+    </footer>
+    <script>
+        const notification = document.getElementById("alert");
+        function closeNotification(){
+            notification.style.display = "none";
+        }
+    </script>
+</th:block>

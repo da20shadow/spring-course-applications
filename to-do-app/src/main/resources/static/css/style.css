@@ -1,0 +1,159 @@
+:root {
+    --blue: #187bde;
+    --darkBlue: #1460aa;
+    --red: #a84b4b;
+    --white: #ffffff;
+    --shadow: 1px 1px 50px 1px rgba(128, 128, 128, 0.55);
+    --shadowSm: 1px 1px 10px 1px rgba(128, 128, 128, 0.55);
+}
+
+html {
+    font-size: 16px;
+    font-family: "Gill Sans MT", sans-serif;
+    box-sizing: border-box;
+}
+
+*, *:after, *:before {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+}
+
+form {
+    width: 75vw;
+    margin: 50px auto;
+    padding: 50px;
+    border: none;
+    border-radius: 9px;
+    box-shadow: var(--shadow);
+}
+
+form input, textarea, select {
+    width: 100%;
+    padding: 7px 11px;
+    font-size: 1rem;
+    margin-bottom: 15px;
+}
+
+form textarea {
+    min-height: 300px;
+}
+
+button {
+    cursor: pointer;
+    padding: 7px 15px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 5px;
+    background-color: var(--blue);
+    color: var(--white);
+}
+
+button:hover {
+    transition: ease-in-out 200ms;
+    background-color: var(--darkBlue);
+    box-shadow: var(--shadowSm);
+    transform: scale(1.05);
+}
+
+a {
+    padding: 7px 11px;
+    text-decoration: none;
+}
+
+table {
+    border: 1px solid;
+    margin: 0 auto;
+    width: 98vw;
+}
+
+table th {
+    padding: 9px 10px;
+    background: lightsteelblue;
+}
+
+table td {
+    padding: 7px 10px;
+    background: #d4dde8;
+    text-align: center;
+}
+
+table td:hover {
+    background: #ecf1f6;
+}
+
+.link {
+    color: var(--blue);
+    text-decoration: underline;
+}
+
+.link:hover {
+    color: var(--darkBlue);
+}
+
+.text-center {
+    text-align: center;
+}
+
+.flex {
+    display: flex;
+}
+
+.align-center {
+    align-items: center;
+}
+
+.justify-center {
+    justify-content: center;
+}
+
+.justify-between {
+    justify-content: space-between;
+}
+
+.gap-5 {
+    gap: 25px;
+}
+
+.flex-wrap {
+    flex-wrap: wrap;
+}
+
+.block {
+    display: block;
+}
+
+.center {
+    margin: 0 auto;
+}
+
+.shadow {
+    box-shadow: var(--shadow);
+}
+
+.shadow-sm {
+    box-shadow: var(--shadowSm);
+}
+
+.w-50 {
+    width: 50%;
+}
+
+.notification {
+    position: fixed;
+    top: 15px;
+    right: 15px;
+    padding: 15px 55px 15px 25px;
+    background-color: var(--red);
+    color: var(--white);
+}
+
+.notification .close {
+    cursor: pointer;
+    position: absolute;
+    top: 15px;
+    right: 5px;
+}

@@ -1,0 +1,23 @@
+<th:block th:fragment>
+    <header class="flex align-center justify-center">
+        <h3>ToDoApp</h3>
+
+        <nav class="flex justify-center">
+
+            <a href="/">Home</a>
+
+            <th:block th:if="${username != null}">
+                <a href="/profile">Profile</a>
+                <a href="/tasks">My Tasks</a>
+                <a href="/tasks/add">Add Task</a>
+                <a href="/logout">Logout</a>
+            </th:block>
+
+            <th:block th:unless="${username != null}">
+                <a href="/auth/login">Login</a>
+                <a href="/auth/register">Register</a>
+            </th:block>
+
+        </nav>
+    </header>
+</th:block>

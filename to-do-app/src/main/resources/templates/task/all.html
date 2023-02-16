@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="~{fragments/head}"></th:block>
+    <title>My Tasks</title>
+</head>
+<body>
+
+<th:block th:include="~{fragments/navigation}"></th:block>
+
+<main>
+    <h1 class="text-center">My Tasks</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Status</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr th:each="task: ${tasks}">
+                <td th:text="${task.title}">Task title here</td>
+                <td th:text="${task.status}">TO DO</td>
+                <td th:text="${task.startDate}">23/03/2023</td>
+                <td th:text="${task.endDate}">09/04/2023</td>
+                <td>Edit | Delete</td>
+            </tr>
+        </tbody>
+
+    </table>
+
+</main>
+
+<th:block th:include="~{fragments/footer}"></th:block>
+
+</body>
+</html>

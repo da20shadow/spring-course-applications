@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:include="~{fragments/head}"></th:block>
+    <title>Create Task</title>
+</head>
+<body>
+
+<th:block th:include="~{fragments/navigation}"></th:block>
+
+<main>
+    <h1 class="text-center">Create New Task</h1>
+    <form th:method="POST" th:object="${taskForm}">
+        <label for="title">Title:</label>
+        <input id="title" name="title" type="text" placeholder="Task title..." required />
+
+        <label for="description">Description:</label>
+        <textarea name="description"
+                  id="description"
+                  cols="30"
+                  rows="10"
+                  placeholder="Task Description..."></textarea>
+
+        <div class="flex gap-5">
+
+            <div>
+                <label for="status">Status:</label>
+                <select name="status" id="status">
+                    <option value="To Do">To Do</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                </select>
+            </div>
+
+            <div>
+                <label for="endDate">Due Date:</label>
+                <input id="endDate" name="endDate" type="date" required />
+            </div>
+
+        </div>
+
+        <button type="submit">Add</button>
+    </form>
+</main>
+
+<th:block th:include="~{fragments/footer}"></th:block>
+
+</body>
+</html>
