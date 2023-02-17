@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:insert="fragments/head::head"></th:block>
+    <title>My Profile</title>
+</head>
+<body>
+
+<header>
+    <nav th:replace="fragments/navigation::navigation"></nav>
+</header>
+
+<h1 class="text-center">My Profile</h1>
+
+<main>
+
+   <h4>Username: <span th:text="${@loggedUser.getUsername()}"></span></h4>
+
+    <a href="/users/edit-profile">
+        <button>Edit profile</button>
+    </a>
+</main>
+
+</body>
+</html>

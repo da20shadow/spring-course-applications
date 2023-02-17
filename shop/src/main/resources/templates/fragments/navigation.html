@@ -1,0 +1,13 @@
+<nav th:fragment="navigation">
+    <a href="/">Home</a>
+    <th:block th:if="${@loggedUser.isLogged()}">
+        <a href="/users/profile">Profile</a>
+        <a href="/products">Products</a>
+        <a href="/products/add">Add Product</a>
+        <a href="/auth/logouy">Logout</a>
+    </th:block>
+    <th:block th:unless="${@loggedUser.isLogged()}">
+        <a href="/auth/login">Login</a>
+        <a href="/auth/register">Register</a>
+    </th:block>
+</nav>

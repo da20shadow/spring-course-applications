@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <th:block th:insert="fragments/head::head"></th:block>
+    <title>Edit Profile</title>
+</head>
+<body>
+
+<header>
+    <nav th:replace="fragments/navigation::navigation"></nav>
+</header>
+
+<h1 class="text-center">Edit Profile</h1>
+
+<main>
+
+    <h4>Username: <span th:text="${@loggedUser.getUsername()}"></span></h4>
+
+    <form class="w-50 mx-auto shadow-sm p-5 rounded"
+          th:method="POST" >
+<!--          th:object="${editUserDTO}" >-->
+
+<!--        <p style="color:darkred; margin:0;"-->
+<!--           th:each="error: ${#fields.errors()}"-->
+<!--           th:text="${error}">-->
+<!--            Error messages-->
+<!--        </p>-->
+<!--        <p th:if="${error}" th:text="${error}"></p>-->
+
+        <label for="email">Email:</label>
+        <input class="w-100 px-2 py-1 mb-2"
+               id="email"
+               name="email"
+               type="email"
+               placeholder="john_99@email.com">
+
+        <label for="password">Password:</label>
+        <input class="w-100 px-2 py-1 mb-2"
+               id="password"
+               name="password"
+               type="password"
+               placeholder="********">
+
+        <label for="confirmPassword">Confirm password:</label>
+        <input class="w-100 px-2 py-1 mb-2"
+               id="confirmPassword"
+               name="confirmPassword"
+               type="password"
+               placeholder="********">
+
+        <button class="px-2 py-1 pointer" type="submit">Save</button>
+    </form>
+
+</main>
+
+</body>
+</html>
