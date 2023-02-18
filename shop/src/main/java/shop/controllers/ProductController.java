@@ -13,9 +13,7 @@ import shop.models.helpers.Option;
 import shop.services.ProductService;
 import shop.utils.LoggedUser;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 @RequestMapping("/products")
@@ -30,12 +28,25 @@ public class ProductController {
         this.loggedUser = loggedUser;
     }
 
+    public double getTotalPrice(Set<Product> products) {
+        double totalPrice = 0.0;
+
+        for (Product product : products) {
+            totalPrice += product.getPrice();
+        }
+
+        return totalPrice;
+    }
+
+
     @GetMapping
     public String showAllProducts(Model model) {
         if (!this.loggedUser.isLogged()) {
             return "redirect:/auth/login";
         }
         Set<Product> products = this.productService.getAllByUserId(this.loggedUser.getId());
+        double totalPrice = getTotalPrice(products);
+        model.addAttribute("totalPrice", totalPrice);
         model.addAttribute("products", products);
         return "product/all";
     }

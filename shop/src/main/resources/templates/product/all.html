@@ -11,7 +11,7 @@
 </header>
 
 <h1 class="text-center">Products</h1>
-
+<h3 class="text-center">Total price: $<span th:text="${totalPrice}"></span></h3>
 <main class="flex gap-5 justify-center flex-wrap">
 
     <article class="shadow-sm p-5 rounded w-25vw" th:each="product: ${products}">

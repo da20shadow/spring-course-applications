@@ -19,17 +19,67 @@
         quis reiciendis repellendus sequi veritatis.</p>
 
     <h2 class="text-center">Our Products</h2>
-    <section class="flex gap-5 flex-wrap">
+    <section>
+        <h2>VEGETABLES</h2>
+        <section class="flex gap-5 flex-wrap">
+            <article class="shadow-sm p-5 rounded w-25vw" th:each="product: ${vegetableProducts}">
+                <h1 th:text="${product.name}"></h1>
+                <p th:text="${product.description}"></p>
+                <p th:text="${'$'+product.price}"></p>
+                <p th:text="${product.getCategory().name.getValue().toString()}"></p>
 
-        <article class="flex-wrap shadow-sm p-5 rounded w-25vw" th:each="product: ${products}">
-            <h1 th:text="${product.name}"></h1>
-            <p th:text="${product.description}"></p>
-            <p th:text="${'$'+product.price}"></p>
-            <p th:text="${product.getCategory().name.getValue().toString()}"></p>
+                <a th:href="@{/products/{id}/details (id=${product.id})}">View</a>
+            </article>
+        </section>
 
-            <a th:href="@{/products/{id}/details (id=${product.id})}">View</a>
+        <h2>FRUITS</h2>
+        <section class="flex gap-5 flex-wrap">
+            <article class="shadow-sm p-5 rounded w-25vw" th:each="product: ${fruitsProducts}">
+                <h1 th:text="${product.name}"></h1>
+                <p th:text="${product.description}"></p>
+                <p th:text="${'$'+product.price}"></p>
+                <p th:text="${product.getCategory().name.getValue().toString()}"></p>
 
-        </article>
+                <a th:href="@{/products/{id}/details (id=${product.id})}">View</a>
+            </article>
+        </section>
+
+        <h2>MEAT</h2>
+        <section class="flex gap-5 flex-wrap">
+            <article class="shadow-sm p-5 rounded w-25vw" th:each="product: ${meatProducts}">
+                <h1 th:text="${product.name}"></h1>
+                <p th:text="${product.description}"></p>
+                <p th:text="${'$'+product.price}"></p>
+                <p th:text="${product.getCategory().name.getValue().toString()}"></p>
+
+                <a th:href="@{/products/{id}/details (id=${product.id})}">View</a>
+            </article>
+        </section>
+
+        <h2>OTHER</h2>
+        <section class="flex gap-5 flex-wrap">
+            <article class="shadow-sm p-5 rounded w-25vw" th:each="product: ${otherProducts}">
+                <h1 th:text="${product.name}"></h1>
+                <p th:text="${product.description}"></p>
+                <p th:text="${'$'+product.price}"></p>
+                <p th:text="${product.getCategory().name.getValue().toString()}"></p>
+
+                <a th:href="@{/products/{id}/details (id=${product.id})}">View</a>
+            </article>
+        </section>
+
+
+<!--        <h2>ALL PRODUCTS</h2>-->
+<!--        <section class="flex gap-5 flex-wrap">-->
+<!--            <article class="shadow-sm p-5 rounded w-25vw" th:each="product: ${products}">-->
+<!--                <h1 th:text="${product.name}"></h1>-->
+<!--                <p th:text="${product.description}"></p>-->
+<!--                <p th:text="${'$'+product.price}"></p>-->
+<!--                <p th:text="${product.getCategory().name.getValue().toString()}"></p>-->
+
+<!--                <a th:href="@{/products/{id}/details (id=${product.id})}">View</a>-->
+<!--            </article>-->
+<!--        </section>-->
 
     </section>
 
