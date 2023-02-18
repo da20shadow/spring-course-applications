@@ -14,8 +14,13 @@
 
 <main>
 
-  <h2>Product name</h2>
-  <p>Product ID: <span th:text="${product}">ID</span></p>
+  <h2 th:text="${product.name}">Product name</h2>
+  <p th:text="${product.price}"></p>
+  <p th:text="${product.description}"></p>
+  <p th:text="${product.getCategory().name.getValue().toString()}"></p>
+
+  <a th:href="@{/products/{id}/edit (id=${product.id})}"
+     th:if="${@loggedUser.getId() == product.getUser().id}">Edit</a>
 
 </main>
 
