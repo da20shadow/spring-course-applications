@@ -1,5 +1,13 @@
+.block {
+    display: block;
+}
+
 .flex {
     display: flex;
+}
+
+.flex-wrap{
+    flex-wrap: wrap;
 }
 
 .justify-center {
@@ -100,6 +108,10 @@
 }
 
 /* ---Width--- */
+.w-25vw {
+    width: 25vw;
+}
+
 .w-50vw {
     width: 50vw;
 }
