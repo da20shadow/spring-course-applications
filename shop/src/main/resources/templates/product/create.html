@@ -13,13 +13,18 @@
 <h1 class="text-center">Add Product</h1>
 
 <main>
-    <form class="w-50 mx-auto shadow-sm p-5 rounded" th:method="POST">
+    <form class="w-50 mx-auto shadow-sm p-5 rounded"
+          th:method="POST" th:object="${productDTO}">
+
+        <p style="color: indianred" th:each="error: ${#fields.errors()}" th:text="${error}"></p>
+        <p style="color: indianred" th:if="${error}" th:text="${error}"></p>
 
         <label for="name">Name:</label>
         <input class="w-100 px-2 py-1 mb-2"
                id="name"
                name="name"
                type="text"
+               th:field="*{name}"
                placeholder="Product Name" required>
 
         <label for="price">Price:</label>
@@ -28,14 +33,39 @@
                name="price"
                type="number"
                step="0.01"
+               th:field="*{price}"
                placeholder="$1.00" required>
 
         <label for="description">Description:</label>
         <textarea class="w-100 px-2 py-1 mb-2"
                   name="description"
                   id="description"
+                  th:field="*{description}"
                   cols="30" rows="10" required></textarea>
 
+        <div class="flex">
+
+            <div>
+                <label for="date">Due Date:</label>
+                <input class="w-100 px-2 py-1 mb-2"
+                       id="date"
+                       name="expirationDate"
+                       type="date"
+                       th:field="*{expirationDate}"
+                       required />
+            </div>
+
+            <div>
+                <label for="date">Category:</label>
+                <select class="w-100 px-2 py-1 mb-2" name="category" id="category">
+                    <option value="FRUITS">Fruits</option>
+                    <option value="VEGETABLES">Vegetables</option>
+                    <option value="MEAT">Meat</option>
+                    <option value="OTHER">Other</option>
+                </select>
+            </div>
+
+        </div>
 
         <button class="px-2 py-1 pointer" type="submit">Add</button>
 
