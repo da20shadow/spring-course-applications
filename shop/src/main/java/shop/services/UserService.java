@@ -16,13 +16,8 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public UserDTO getUserById(Long id) {
-        User user = this.userRepository.findById(id).orElse(null);
-
-        if (user == null) {
-            return null;
-        }
-        return this.mapUserToUserDTO(user);
+    public User getUserById(Long id) {
+        return this.userRepository.findById(id).orElse(null);
     }
 
     public UserDTO getUserByUsername(String username) {
