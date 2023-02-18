@@ -17,6 +17,22 @@
         A neque nostrum tempora.
         Eligendi expedita facere hic impedit itaque minus molestiae officiis placeat quaerat quas quidem,
         quis reiciendis repellendus sequi veritatis.</p>
+
+    <h2 class="text-center">Our Products</h2>
+    <section class="flex gap-5 flex-wrap">
+
+        <article class="flex-wrap shadow-sm p-5 rounded w-25vw" th:each="product: ${products}">
+            <h1 th:text="${product.name}"></h1>
+            <p th:text="${product.description}"></p>
+            <p th:text="${'$'+product.price}"></p>
+            <p th:text="${product.getCategory().name.getValue().toString()}"></p>
+
+            <a th:href="@{/products/{id}/details (id=${product.id})}">View</a>
+
+        </article>
+
+    </section>
+
 </main>
 
 </body>
