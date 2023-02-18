@@ -14,11 +14,25 @@
 
 <main>
 
+    <p th:if="${error}" th:text="${error}"></p>
+
    <h4>Username: <span th:text="${@loggedUser.getUsername()}"></span></h4>
+
+    <p>Email: <span th:text="${user.email}"></span></p>
+
 
     <a href="/users/edit-profile">
         <button>Edit profile</button>
     </a>
+
+    <h4>My Products:</h4>
+    <ul>
+        <li th:each="product: ${products}">
+            <p>Product: <span th:text="${product.name}"></span></p>
+            <p>Product: <span th:text="${product.price}"></span></p>
+        </li>
+    </ul>
+
 </main>
 
 </body>

@@ -44,4 +44,8 @@ public class UserService {
                 .email(user.getEmail())
                 .build();
     }
+
+    public User getProfileInfo(Long id) {
+        return this.userRepository.findById(id).orElse(null);
+    }
 }
