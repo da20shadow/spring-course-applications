@@ -1,4 +1,4 @@
-package restapi.model.entities;
+package com.restapi.shared.model.entity;
 
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

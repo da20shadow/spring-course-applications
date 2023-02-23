@@ -1,4 +1,4 @@
-package restapi;
+package com.restapi;
 
 public class BooksAppInit {
 }

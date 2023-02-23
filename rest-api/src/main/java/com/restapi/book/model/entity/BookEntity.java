@@ -1,5 +1,7 @@
-package restapi.model.entities;
+package com.restapi.book.model.entity;
 
+import com.restapi.author.model.entity.AuthorEntity;
+import com.restapi.shared.model.entity.BaseEntity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
