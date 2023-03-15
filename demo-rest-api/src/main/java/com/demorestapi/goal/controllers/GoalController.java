@@ -15,6 +15,9 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/goals")
+//TODO: add only "http://localhost:3000/"
+@CrossOrigin(origins = "*", maxAge = 3600,
+        allowedHeaders={"x-auth-token", "x-requested-with", "x-xsrf-token"})
 public class GoalController {
 
     private final GoalService goalService;
