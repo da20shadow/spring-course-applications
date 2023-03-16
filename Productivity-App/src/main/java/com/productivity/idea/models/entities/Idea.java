@@ -19,7 +19,9 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
-@Table(name = "ideas")
+@Table(name = "ideas",uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"user_id", "title"})
+})
 public class Idea extends BaseEntity {
     @NotBlank(message = "Title can not be empty!")
     @Column(name = "title")
