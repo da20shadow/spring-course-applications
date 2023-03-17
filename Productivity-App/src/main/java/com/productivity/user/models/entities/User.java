@@ -2,26 +2,31 @@ package com.productivity.user.models.entities;
 
 import com.productivity.goal.models.entities.Goal;
 import com.productivity.idea.models.entities.Idea;
-import com.productivity.shared.models.BaseEntity;
+import com.productivity.user.models.enums.Role;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "users")
-public class User extends BaseEntity {
+public class User implements UserDetails {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @NotBlank(message = "First name cannot be empty!")
     @Column(name = "first_name", nullable = false, length = 45)
@@ -41,6 +46,9 @@ public class User extends BaseEntity {
     @Column(name = "password")
     private String password;
 
+    @Enumerated(EnumType.STRING)
+    private Role role;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Goal> goals = new ArrayList<>();
 
@@ -48,5 +56,34 @@ public class User extends BaseEntity {
     private List<Idea> ideas = new ArrayList<>();
 
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return null;
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
 
