@@ -15,6 +15,10 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class TargetService {
@@ -70,5 +74,34 @@ public class TargetService {
         return new EditTargetSuccessResponseDTO(
                 TargetMessages.SuccessMessages.UPDATED_SUCCESS,
                 updatedTargetDTO);
+    }
+
+    public TargetDTO getTargetById(Long targetId, Long userId) {
+        Target target = targetRepository.findByIdAndUserId(targetId, userId)
+                .orElseThrow(() -> new TargetNotFoundException(TargetMessages.ErrorMessages.NOT_FOUND));
+
+        //TODO: get total tasks, completed tasks and all target tasks
+        return TargetDTO.builder()
+                .title(target.getTitle())
+                .description(target.getDescription())
+                .tasks(new HashSet<>())
+                .totalTasks(0)
+                .totalCompletedTasks(0)
+                .build();
+    }
+
+    public Set<TargetDTO> getGoalTargets(Long goalId, Long userId) {
+
+        Set<Target> targets = targetRepository.findAllByGoalIdAndUserId(goalId, userId);
+
+        return targets.stream().map(target -> {
+            //TODO count target total and completed tasks
+            return TargetDTO.builder()
+                    .title(target.getTitle())
+                    .description(target.getDescription())
+                    .totalTasks(0)
+                    .totalCompletedTasks(0)
+                    .build();
+        }).collect(Collectors.toSet());
     }
 }
