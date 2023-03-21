@@ -60,11 +60,11 @@ public class AuthService {
 
         //Check if the user exist
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UserNotFoundException(UserMessages.ErrorMessages.USER_NOT_FOUND));
+                .orElseThrow(() -> new UserNotFoundException(UserMessages.ErrorMessages.LOGIN_BAD_CREDENTIALS));
 
         //Verify the user password
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-            throw new InvalidPasswordException(UserMessages.ErrorMessages.INVALID_PASSWORD);
+            throw new InvalidPasswordException(UserMessages.ErrorMessages.LOGIN_BAD_CREDENTIALS);
         }
         //Generate jwt token
         var jwtToken = jwtService.generateToken(user);
@@ -74,6 +74,7 @@ public class AuthService {
         return new LoginSuccessResponseDTO(
                 UserMessages.SuccessMessages.LOGIN_SUCCESS,
                 jwtToken,
+                user.getFirstName(),
                 user.getEmail(),
                 user.getRole());
     }
