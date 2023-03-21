@@ -1,6 +1,7 @@
 package com.security.auth.config.security;
 
 import com.security.auth.user.models.enums.UserRole;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -44,6 +45,14 @@ public class SecurityConfig {
                     .requestMatchers("/api/v1/auth/**").permitAll()
                     .requestMatchers("/management/api/v1/**").hasRole(UserRole.ADMIN.name())
                     .anyRequest().authenticated()
+//                .and()
+//                .exceptionHandling()
+//                    .authenticationEntryPoint((request, response, authException) -> {
+//                        response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized");
+//                    })
+//                    .accessDeniedHandler((request, response, accessDeniedException) -> {
+//                        response.sendError(HttpServletResponse.SC_FORBIDDEN, "Access denied");
+//                    })
                 .and()
                 .sessionManagement()
                     .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -62,7 +71,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+        configuration.setAllowedOrigins(Collections.singletonList("http://192.168.0.104:3000"));
         configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","PATCH","DELETE"));
         configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
         configuration.setAllowCredentials(true);
