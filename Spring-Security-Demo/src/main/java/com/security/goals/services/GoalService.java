@@ -64,6 +64,7 @@ public class GoalService {
             throw new GoalNotFoundException(GoalMessages.ErrorGoalMessages.NOT_FOUND);
         }
         int totalIdeas = ideaRepository.countIdeasByGoalId(goalId);
+        //TODO: get all goal targets
         return GoalDTO.builder()
                 .id(optionalGoal.get().getId())
                 .title(optionalGoal.get().getTitle())
