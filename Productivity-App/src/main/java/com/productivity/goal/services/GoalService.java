@@ -40,7 +40,8 @@ public class GoalService {
         this.userRepository = userRepository;
     }
 
-    public Goal addGoal(Long userId, String title, String description, LocalDate deadline, GoalCategory category) throws Exception {
+    public Goal addGoal(Long userId, String title, String description,
+                        LocalDate deadline, GoalCategory category) throws Exception {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> UserException.userNotFound(userId));
 
