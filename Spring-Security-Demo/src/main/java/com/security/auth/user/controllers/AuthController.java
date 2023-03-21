@@ -57,7 +57,7 @@ public class AuthController {
             LoginSuccessResponseDTO response = authService.login(request);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorResponseDTO(e.getMessage()));
+            return ResponseEntity.badRequest().body(new ErrorResponseDTO(e.getMessage()));
         }
     }
 
