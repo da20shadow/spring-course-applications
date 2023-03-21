@@ -26,6 +26,7 @@ public class TargetService {
     private final GoalRepository goalRepository;
     private final ModelMapper modelMapper;
 
+    //Create new target
     public AddTargetSuccessResponseDTO add(User user, AddTargetDTO addTargetDTO) {
 
         Goal goal = goalRepository.findByIdAndUserId(addTargetDTO.getGoalId(), user.getId())
@@ -47,6 +48,7 @@ public class TargetService {
                 targetDTO);
     }
 
+    //Update Target
     public EditTargetSuccessResponseDTO edit(User user, Long targetId, EditTargetDTO editTargetDTO) {
 
         Target target = targetRepository.findByIdAndUserId(targetId, user.getId())
@@ -76,6 +78,7 @@ public class TargetService {
                 updatedTargetDTO);
     }
 
+    //Get target by id
     public TargetDTO getTargetById(Long targetId, Long userId) {
         Target target = targetRepository.findByIdAndUserId(targetId, userId)
                 .orElseThrow(() -> new TargetNotFoundException(TargetMessages.ErrorMessages.NOT_FOUND));
@@ -90,6 +93,7 @@ public class TargetService {
                 .build();
     }
 
+    //Get all goal ID targets
     public Set<TargetDTO> getGoalTargets(Long goalId, Long userId) {
 
         Set<Target> targets = targetRepository.findAllByGoalIdAndUserId(goalId, userId);

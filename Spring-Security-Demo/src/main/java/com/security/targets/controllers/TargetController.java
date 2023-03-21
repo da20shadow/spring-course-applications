@@ -60,4 +60,26 @@ public class TargetController {
             return ResponseEntity.badRequest().body(new ErrorResponseDTO(e.getMessage()));
         }
     }
+
+    @GetMapping("/{targetId}")
+    public ResponseEntity<?> getTargetById(@PathVariable Long targetId,
+                                            Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(targetService.getTargetById(targetId, user.getId()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorResponseDTO(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/goals/{goalId}")
+    public ResponseEntity<?> getGoalTargets(@PathVariable Long goalId,
+                                            Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(targetService.getGoalTargets(goalId, user.getId()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorResponseDTO(e.getMessage()));
+        }
+    }
 }
