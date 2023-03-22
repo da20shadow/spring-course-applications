@@ -10,6 +10,8 @@ import com.security.goals.models.entities.Goal;
 import com.security.goals.repositories.GoalRepository;
 import com.security.ideas.repositories.IdeaRepository;
 import com.security.targets.models.dtos.TargetDTO;
+import com.security.targets.models.entities.Target;
+import com.security.targets.repositories.TargetRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,7 @@ import java.util.*;
 public class GoalService {
     private final GoalRepository goalRepository;
     private final IdeaRepository ideaRepository;
+    private final TargetRepository targetRepository;
     private final ModelMapper modelMapper;
 
     public GoalDTO add(User user, AddGoalDTO addGoalDTO) throws Exception {
@@ -72,10 +75,7 @@ public class GoalService {
                 .category(optionalGoal.get().getCategory())
                 .createdAt(optionalGoal.get().getCreatedAt())
                 .deadline(optionalGoal.get().getDeadline())
-                .targets(new HashSet<>())
                 .totalIdeas(totalIdeas)
-                .totalTargets(0)
-                .totalCompletedTargets(0)
                 .build();
     }
 
