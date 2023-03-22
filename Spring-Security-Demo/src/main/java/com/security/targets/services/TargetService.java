@@ -15,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -35,6 +36,7 @@ public class TargetService {
         Target target = Target.builder()
                 .title(addTargetDTO.getTitle())
                 .description(addTargetDTO.getDescription())
+                .createdAt(LocalDateTime.now())
                 .user(user)
                 .goal(goal)
                 .build();
@@ -87,6 +89,7 @@ public class TargetService {
         return TargetDTO.builder()
                 .title(target.getTitle())
                 .description(target.getDescription())
+                .createdAt(target.getCreatedAt())
                 .tasks(new HashSet<>())
                 .totalTasks(0)
                 .totalCompletedTasks(0)
@@ -101,6 +104,7 @@ public class TargetService {
         return targets.stream().map(target -> {
             //TODO count target total and completed tasks
             return TargetDTO.builder()
+                    .id(target.getId())
                     .title(target.getTitle())
                     .description(target.getDescription())
                     .totalTasks(0)
