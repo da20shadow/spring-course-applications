@@ -36,7 +36,7 @@ public class TargetController {
         }
         try {
             User user = (User) authentication.getPrincipal();
-            return ResponseEntity.ok(targetService.add(user, addTargetDTO));
+            return ResponseEntity.status(201).body(targetService.add(user, addTargetDTO));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorResponseDTO(e.getMessage()));
         }
