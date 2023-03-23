@@ -6,24 +6,29 @@ import com.security.goals.exceptions.GoalNotFoundException;
 import com.security.goals.models.entities.Goal;
 import com.security.goals.repositories.GoalRepository;
 import com.security.targets.constants.TargetMessages;
+import com.security.targets.exceptions.DuplicateTargetException;
 import com.security.targets.exceptions.TargetNotFoundException;
 import com.security.targets.exceptions.TargetNotUpdatedException;
 import com.security.targets.models.dtos.*;
 import com.security.targets.models.entities.Target;
 import com.security.targets.repositories.TargetRepository;
+import com.security.tasks.models.entities.Task;
+import com.security.tasks.models.enums.TaskStatus;
+import com.security.tasks.repositories.TaskRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class TargetService {
     private final TargetRepository targetRepository;
+    private final TaskRepository taskRepository;
     private final GoalRepository goalRepository;
     private final ModelMapper modelMapper;
 
@@ -32,6 +37,12 @@ public class TargetService {
 
         Goal goal = goalRepository.findByIdAndUserId(addTargetDTO.getGoalId(), user.getId())
                 .orElseThrow(() -> new GoalNotFoundException(GoalMessages.ErrorGoalMessages.NOT_FOUND));
+
+        Optional<Target> existingTarget = targetRepository.findByTitleAndGoalIdAndUserId(addTargetDTO.getTitle(), goal.getId(), user.getId());
+
+        if (existingTarget.isPresent()) {
+            throw new DuplicateTargetException(TargetMessages.ErrorMessages.DUPLICATE_TARGET);
+        }
 
         Target target = Target.builder()
                 .title(addTargetDTO.getTitle())
@@ -81,18 +92,26 @@ public class TargetService {
     }
 
     //Get target by id
+    @Transactional
     public TargetDTO getTargetById(Long targetId, Long userId) {
         Target target = targetRepository.findByIdAndUserId(targetId, userId)
                 .orElseThrow(() -> new TargetNotFoundException(TargetMessages.ErrorMessages.NOT_FOUND));
 
-        //TODO: get total tasks, completed tasks and all target tasks
+        List<Task> tasks = target.getTasks();
+        int completedTasks = 0;
+        for (Task task : tasks) {
+            if (task.getStatus().equals(TaskStatus.Completed)) {
+                completedTasks++;
+            }
+        }
         return TargetDTO.builder()
+                .id(target.getId())
                 .title(target.getTitle())
                 .description(target.getDescription())
                 .createdAt(target.getCreatedAt())
-                .tasks(new HashSet<>())
-                .totalTasks(0)
-                .totalCompletedTasks(0)
+                .tasks(new ArrayList<>())
+                .totalTasks(tasks.size())
+                .totalCompletedTasks(completedTasks)
                 .build();
     }
 
@@ -102,13 +121,15 @@ public class TargetService {
         Set<Target> targets = targetRepository.findAllByGoalIdAndUserId(goalId, userId);
 
         return targets.stream().map(target -> {
-            //TODO count target total and completed tasks
+            int totalTasks = taskRepository.countTotalTasksByTargetId(target.getId());
+            int totalCompletedTasks = taskRepository.countTotalCompletedTasksByTargetId(target.getId());
             return TargetDTO.builder()
                     .id(target.getId())
                     .title(target.getTitle())
                     .description(target.getDescription())
-                    .totalTasks(0)
-                    .totalCompletedTasks(0)
+                    .createdAt(target.getCreatedAt())
+                    .totalTasks(totalTasks)
+                    .totalCompletedTasks(totalCompletedTasks)
                     .build();
         }).collect(Collectors.toSet());
     }
