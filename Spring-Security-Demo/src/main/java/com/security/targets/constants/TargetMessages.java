@@ -8,6 +8,7 @@ public class TargetMessages {
         public static final String DELETED_ERROR = "Unable to delete target!";
         public static final String NOT_FOUND = "Target not found!";
         public static final String NO_CHANGES_ERROR = "No changes!";
+        public static final String DUPLICATE_TARGET = "Target with such title already added!";
     }
 
     public static class SuccessMessages {
