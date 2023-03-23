@@ -17,4 +17,6 @@ public interface TargetRepository extends JpaRepository<Target,Long> {
 
     @Query("SELECT COUNT(t) FROM Target t WHERE t.goal.id = :goalId")
     int countTargetsByGoalId(Long goalId);
+
+    Optional<Target> findByTitleAndGoalIdAndUserId(String title, Long goalId, Long userId);
 }
