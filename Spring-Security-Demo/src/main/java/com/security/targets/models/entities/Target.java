@@ -4,6 +4,7 @@ package com.security.targets.models.entities;
 import com.security.auth.user.models.entities.User;
 import com.security.goals.models.entities.Goal;
 import com.security.shared.models.entities.BaseEntity;
+import com.security.tasks.models.entities.Task;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -13,6 +14,10 @@ import lombok.Setter;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "targets", uniqueConstraints = {
@@ -43,8 +48,8 @@ public class Target extends BaseEntity {
     @JoinColumn(name = "goal_id")
     private Goal goal;
 
-//    @OneToMany(mappedBy = "target", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private Set<Task> tasks = new ArrayList<>();
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "target", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Task> tasks = new ArrayList<>();
 
 }
 

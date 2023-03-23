@@ -8,6 +8,7 @@ import lombok.Setter;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -22,5 +23,5 @@ public class TargetDTO {
     private LocalDateTime createdAt;
     private int totalTasks;
     private int totalCompletedTasks;
-    private Set<Task> tasks;
+    private List<Task> tasks;
 }
