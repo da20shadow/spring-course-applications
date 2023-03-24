@@ -9,9 +9,12 @@ import com.security.goals.models.dtos.GoalDTO;
 import com.security.goals.models.entities.Goal;
 import com.security.goals.repositories.GoalRepository;
 import com.security.ideas.repositories.IdeaRepository;
-import com.security.targets.models.dtos.TargetDTO;
+import com.security.shared.models.dtos.SuccessResponseDTO;
 import com.security.targets.models.entities.Target;
 import com.security.targets.repositories.TargetRepository;
+import com.security.tasks.models.entities.Task;
+import com.security.tasks.models.enums.TaskStatus;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -42,9 +45,27 @@ public class GoalService {
         return modelMapper.map(createdGoal, GoalDTO.class);
     }
 
+    @Transactional
     public Page<GoalDTO> getAllUserGoals(Long userId, Pageable pageable) {
         Page<Goal> goalsPage = goalRepository.findByUserId(userId, pageable);
         return goalsPage.map(goal -> {
+
+            Set<Target> targets = goal.getTargets();
+            int totalCompletedTargets = 0;
+
+            for (Target target : targets) {
+                List<Task> tasks = target.getTasks();
+                int totalCompletedTasks = 0;
+                for (Task task : tasks) {
+                    if (task.getStatus().getStatusName().equals("Completed")) {
+                        totalCompletedTasks++;
+                    }
+                }
+                if (tasks.size() > 0 && totalCompletedTasks == tasks.size()) {
+                    totalCompletedTargets++;
+                }
+            }
+
             return GoalDTO.builder()
                     .id(goal.getId())
                     .title(goal.getTitle())
@@ -53,20 +74,34 @@ public class GoalService {
                     .createdAt(goal.getCreatedAt())
                     .deadline(goal.getDeadline())
                     .targets(new HashSet<>())
-                    .totalIdeas(3)
-                    .totalTargets(0)
-                    .totalCompletedTargets(0)
+                    .totalTargets(targets.size())
+                    .totalCompletedTargets(totalCompletedTargets)
                     .build();
         });
 //        return goalsPage.map(this::getGoalDTOWithCompletedTargetsAndTotalTargets);
     }
 
+    @Transactional
     public GoalDTO getGoalById(Long goalId, Long userId) {
-        Optional<Goal> optionalGoal = goalRepository.findByIdAndUserId(goalId,userId);
+        Optional<Goal> optionalGoal = goalRepository.findByIdAndUserId(goalId, userId);
         if (optionalGoal.isEmpty()) {
             throw new GoalNotFoundException(GoalMessages.ErrorGoalMessages.NOT_FOUND);
         }
         int totalIdeas = ideaRepository.countIdeasByGoalId(goalId);
+        Set<Target> targets = optionalGoal.get().getTargets();
+        int totalCompletedTargets = 0;
+        for (Target target : targets) {
+            List<Task> tasks = target.getTasks();
+            int totalCompletedTasks = 0;
+            for (Task task : tasks) {
+                if (task.getStatus().getStatusName().equals("Completed")) {
+                    totalCompletedTasks++;
+                }
+            }
+            if (tasks.size() > 0 && totalCompletedTasks == tasks.size()) {
+                totalCompletedTargets++;
+            }
+        }
         //TODO: get all goal targets
         return GoalDTO.builder()
                 .id(optionalGoal.get().getId())
@@ -76,7 +111,16 @@ public class GoalService {
                 .createdAt(optionalGoal.get().getCreatedAt())
                 .deadline(optionalGoal.get().getDeadline())
                 .totalIdeas(totalIdeas)
+                .totalCompletedTargets(totalCompletedTargets)
+                .totalTargets(targets.size())
                 .build();
+    }
+
+    public SuccessResponseDTO deleteGoal(Long goalId, Long userId) {
+        Goal goal = goalRepository.findByIdAndUserId(goalId, userId)
+                .orElseThrow(()-> new GoalNotFoundException(GoalMessages.ErrorGoalMessages.NOT_FOUND));
+        goalRepository.delete(goal);
+        return new SuccessResponseDTO(GoalMessages.SuccessGoalMessages.DELETED_SUCCESS);
     }
 
 //    private GoalDTO getGoalDTOWithCompletedTargetsAndTotalTargets(Goal goal) {
