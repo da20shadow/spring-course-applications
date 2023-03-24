@@ -8,6 +8,7 @@ import com.security.ideas.models.entities.Tag;
 import com.security.tasks.models.dtos.AddTaskDTO;
 import com.security.tasks.models.entities.Task;
 import com.security.utils.converter.StringToLocalDateConverter;
+import com.security.utils.converter.StringToLocalDateTimeConverter;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.AbstractConverter;
 import org.modelmapper.Converter;
@@ -16,8 +17,10 @@ import org.modelmapper.TypeMap;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -26,34 +29,57 @@ import java.util.Set;
 public class ModelMapperConfig {
 
     private final StringToLocalDateConverter stringToLocalDateConverter;
+    private final StringToLocalDateTimeConverter stringToLocalDateTimeConverter;
 
     @Bean
     public ModelMapper modelMapper() {
         ModelMapper modelMapper = new ModelMapper();
         addIdeaMappings(modelMapper);
-//        addGoalMappings(modelMapper);
-//        addTaskMappings(modelMapper);
+        addGoalMappings(modelMapper);
+        addTaskMappings(modelMapper);
         //TODO: add other mappings if needed
 
-        Converter<String, LocalDateTime> stringToLocalDateTime = new AbstractConverter<String, LocalDateTime>() {
-            @Override
-            protected LocalDateTime convert(String source) {
-                if (source == null) {
-                    return null;
-                }
-                return LocalDateTime.parse(source, DateTimeFormatter.ISO_DATE_TIME);
-            }
-        };
+//        Converter<String, LocalDateTime> stringToLocalDateTime = new AbstractConverter<String, LocalDateTime>() {
+//            @Override
+//            protected LocalDateTime convert(String source) {
+//                if (source == null) {
+//                    return null;
+//                }
+//                return LocalDateTime.parse(source, DateTimeFormatter.ISO_DATE_TIME);
+//            }
+//        };
+//        Converter<LocalDateTime, String> localDateTimeToString = new AbstractConverter<LocalDateTime, String>() {
+//            @Override
+//            protected String convert(LocalDateTime source) {
+//                if (source == null) {
+//                    return null;
+//                }
+//                return source.format(DateTimeFormatter.ISO_DATE_TIME);
+//            }
+//        };
+
+//        Converter<String, LocalDateTime> stringToLocalDateTime = new AbstractConverter<String, LocalDateTime>() {
+//            @Override
+//            protected LocalDateTime convert(String source) {
+//                if (source == null) {
+//                    return null;
+//                }
+//                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+//                return LocalDateTime.parse(source, formatter);
+//            }
+//        };
+//
         Converter<LocalDateTime, String> localDateTimeToString = new AbstractConverter<LocalDateTime, String>() {
             @Override
             protected String convert(LocalDateTime source) {
                 if (source == null) {
                     return null;
                 }
-                return source.format(DateTimeFormatter.ISO_DATE_TIME);
+                return source.format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
             }
         };
-        modelMapper.addConverter(stringToLocalDateTime);
+
+//        modelMapper.addConverter(stringToLocalDateTime);
         modelMapper.addConverter(localDateTimeToString);
         return modelMapper;
     }
@@ -85,9 +111,9 @@ public class ModelMapperConfig {
     private void addTaskMappings(ModelMapper modelMapper) {
         TypeMap<AddTaskDTO, Task> typeMap =
                 modelMapper.createTypeMap(AddTaskDTO.class, Task.class)
-                        .addMappings(mapper -> mapper.using(stringToLocalDateConverter)
+                        .addMappings(mapper -> mapper.using(stringToLocalDateTimeConverter)
                                 .map(AddTaskDTO::getStartDate, Task::setStartDate))
-                        .addMappings(mapper -> mapper.using(stringToLocalDateConverter)
+                        .addMappings(mapper -> mapper.using(stringToLocalDateTimeConverter)
                                 .map(AddTaskDTO::getDueDate, Task::setDueDate));
 
         typeMap.addMappings(mapper -> mapper.skip(Task::setId));
