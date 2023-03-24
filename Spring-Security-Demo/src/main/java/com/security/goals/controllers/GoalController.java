@@ -55,15 +55,27 @@ public class GoalController {
         }
     }
 
+    @DeleteMapping("/{goalId}")
+    public ResponseEntity<?> deleteGoal(@PathVariable Long goalId, Authentication authentication) {
+        System.out.println(goalId);
+        try {
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(goalService.deleteGoal(goalId,user.getId()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorResponseDTO(e.getMessage()));
+        }
+    }
+
     @GetMapping
     public ResponseEntity<?> getAllGoals(@RequestParam(defaultValue = "0") int page,
                                          @RequestParam(defaultValue = "25") int size,
                                          Authentication authentication) {
         try {
             User user = (User) authentication.getPrincipal();
-            Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
+            Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").ascending());
             return ResponseEntity.ok(goalService.getAllUserGoals(user.getId(), pageable));
         } catch (Exception e) {
+            System.out.println(e.toString());
             return ResponseEntity.badRequest()
                     .body(new ErrorResponseDTO(e.getMessage()));
         }
@@ -78,6 +90,7 @@ public class GoalController {
             GoalDTO goal = goalService.getGoalById(id,user.getId());
             return ResponseEntity.ok(goal);
         } catch (Exception e) {
+            System.out.println(e.toString());
             return ResponseEntity.badRequest().body(new ErrorResponseDTO(e.getMessage()));
         }
     }
