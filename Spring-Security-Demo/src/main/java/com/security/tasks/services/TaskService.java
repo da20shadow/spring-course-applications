@@ -6,6 +6,7 @@ import com.security.targets.exceptions.TargetNotFoundException;
 import com.security.targets.models.entities.Target;
 import com.security.targets.repositories.TargetRepository;
 import com.security.tasks.constants.TaskMessages;
+import com.security.tasks.exceptions.DuplicateTaskTitleException;
 import com.security.tasks.exceptions.TaskNotFoundException;
 import com.security.tasks.models.dtos.AddTaskDTO;
 import com.security.tasks.models.dtos.EditTaskDTO;
@@ -32,36 +33,16 @@ public class TaskService {
 
     public TaskDTO addTask(AddTaskDTO addTaskDTO, User user) {
         Task task = modelMapper.map(addTaskDTO, Task.class);
-
-//        if (addTaskDTO.getTitle() != null) {
-//            task.setTitle(addTaskDTO.getTitle());
-//        }
-//        if (addTaskDTO.getDescription() != null) {
-//            task.setDescription(addTaskDTO.getDescription());
-//        }
-//        if (addTaskDTO.getStatus() != null) {
-//            task.setStatus(addTaskDTO.getStatus());
-//        }
-//        if (addTaskDTO.getPriority() != null) {
-//            task.setPriority(addTaskDTO.getPriority());
-//        }
-//        if (addTaskDTO.isUrgent()) {
-//            task.setUrgent(addTaskDTO.isUrgent());
-//        }
-//        if (addTaskDTO.isImportant()) {
-//            task.setImportant(addTaskDTO.isImportant());
-//        }
-//        if (addTaskDTO.getStartDate() != null) {
-//            task.setStartDate(LocalDateTime.parse(addTaskDTO.getStartDate()));
-//        }
-//        if (addTaskDTO.getDueDate() != null) {
-//            task.setDueDate(LocalDateTime.parse(addTaskDTO.getDueDate()));
-//        }
         task.setChecklist(new HashSet<>());
         task.setCreatedAt(LocalDateTime.now());
         task.setUser(user);
 
         if (addTaskDTO.getTargetId() != null) {
+            Optional<Task> existTask = taskRepository.findByTitleAndTargetIdAndUserId(addTaskDTO.getTitle(),addTaskDTO.getTargetId(), user.getId());
+            if (existTask.isPresent()) {
+                throw new DuplicateTaskTitleException(TaskMessages.ErrorMessages.DUPLICATE_TITLE_ERROR);
+            }
+
             Optional<Target> optionalTarget = targetRepository.findByIdAndUserId(addTaskDTO.getTargetId(), user.getId());
             if (optionalTarget.isPresent()) {
                 task.setTarget(optionalTarget.get());
@@ -76,6 +57,7 @@ public class TaskService {
 
     public TaskDTO updateTask(Long taskId, EditTaskDTO editTaskDTO, Long userId) {
         Optional<Task> optionalTask = taskRepository.findByIdAndUserId(taskId, userId);
+
         if (optionalTask.isEmpty()) {
             throw new TaskNotFoundException(TaskMessages.ErrorMessages.NOT_FOUND);
         }
@@ -144,7 +126,7 @@ public class TaskService {
     }
 
     private TaskDTO toTaskDTO(Task task) {
-        return TaskDTO.builder()
+        TaskDTO.TaskDTOBuilder taskBuilder = TaskDTO.builder()
                 .id(task.getId())
                 .title(task.getTitle())
                 .description(task.getDescription())
@@ -154,9 +136,12 @@ public class TaskService {
                 .important(task.isImportant())
                 .startDate(task.getStartDate())
                 .dueDate(task.getDueDate())
-                .targetId(task.getTarget().getId())
-                .createdAt(task.getCreatedAt())
-                .build();
+                .createdAt(task.getCreatedAt());
+
+        if (task.getTarget() != null) {
+            taskBuilder.targetId(task.getTarget().getId());
+        }
+        return taskBuilder.build();
     }
 }
 
