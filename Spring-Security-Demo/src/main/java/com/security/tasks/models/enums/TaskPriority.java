@@ -1,9 +1,9 @@
 package com.security.tasks.models.enums;
 
 public enum TaskPriority {
-    High,
-    Medium,
+    No_Priority,
     Low,
-    No_Priority
+    Medium,
+    High,
 }
 
