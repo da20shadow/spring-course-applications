@@ -100,7 +100,7 @@ public class TargetService {
         List<Task> tasks = target.getTasks();
         int completedTasks = 0;
         for (Task task : tasks) {
-            if (task.getStatus().equals(TaskStatus.Completed)) {
+            if (task.getStatus().getStatusName().equals("Completed")) {
                 completedTasks++;
             }
         }
