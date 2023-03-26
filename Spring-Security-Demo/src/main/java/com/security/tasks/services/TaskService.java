@@ -21,7 +21,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -61,7 +63,9 @@ public class TaskService {
         if (optionalTask.isEmpty()) {
             throw new TaskNotFoundException(TaskMessages.ErrorMessages.NOT_FOUND);
         }
+
         Task task = optionalTask.get();
+
         if (editTaskDTO.getTitle() != null) {
             task.setTitle(editTaskDTO.getTitle());
         }
@@ -74,21 +78,34 @@ public class TaskService {
         if (editTaskDTO.getPriority() != null) {
             task.setPriority(editTaskDTO.getPriority());
         }
-        if (editTaskDTO.isUrgent()) {
-            task.setUrgent(editTaskDTO.isUrgent());
+
+        if (Objects.equals(editTaskDTO.isImportant(), Boolean.TRUE)) {
+            task.setImportant(true);
+        } else if (Objects.equals(editTaskDTO.isImportant(), Boolean.FALSE)) {
+            task.setImportant(false);
         }
-        if (editTaskDTO.isImportant()) {
-            task.setImportant(editTaskDTO.isImportant());
+
+        if (Objects.equals(editTaskDTO.isUrgent(), Boolean.TRUE)) {
+            task.setUrgent(true);
+        } else if (Objects.equals(editTaskDTO.isUrgent(), Boolean.FALSE)) {
+            task.setUrgent(false);
         }
+
         if (editTaskDTO.getStartDate() != null) {
-            task.setStartDate(editTaskDTO.getStartDate());
+            LocalDateTime startDate = LocalDateTime.parse(editTaskDTO.getStartDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+            task.setStartDate(startDate);
         }
+
         if (editTaskDTO.getDueDate() != null) {
-            task.setDueDate(editTaskDTO.getDueDate());
+            LocalDateTime dueDate = LocalDateTime.parse(editTaskDTO.getDueDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+            task.setDueDate(dueDate);
         }
+
+
         task = taskRepository.save(task);
         return toTaskDTO(task);
     }
+
 
     public void deleteTask(Long taskId, Long userId) {
         Optional<Task> optionalTask = taskRepository.findByIdAndUserId(taskId, userId);
