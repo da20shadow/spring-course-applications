@@ -12,6 +12,9 @@ public class TaskMessages {
         public static final String GET_URGENT_ERROR = "Failed to retrieve urgent tasks. Please try again later.";
         public static final String GET_BY_TARGET_ERROR = "Failed to retrieve tasks by target. Please check that the target exists and try again.";
         public static final String DUPLICATE_TITLE_ERROR = "Task with such title already exist!";
+        public static final String DUPLICATE_CHECKLIST_ITEM_TITLE_ERROR = "Item with such title already added!";
+        public static final String CHECKLIST_ITEM_NOT_FOUND = "Checklist item not found!";
+        public static final String NO_CHANGE = "There is no any change!";
     }
 
     public static class SuccessMessages {
@@ -22,6 +25,8 @@ public class TaskMessages {
         public static final String GET_IMPORTANT_SUCCESS = "Important tasks retrieved successfully.";
         public static final String GET_URGENT_SUCCESS = "Urgent tasks retrieved successfully.";
         public static final String GET_BY_TARGET_SUCCESS = "Tasks by target retrieved successfully.";
-
+        public static final String ADD_CHECKLIST_ITEM_SUCCESS = "Successfully added checklist item!";
+        public static final String DELETE_CHECKLIST_ITEM_SUCCESS = "Successfully deleted checklist item.";
+        public static final String UPDATE_CHECKLIST_ITEM_SUCCESS = "Successfully updated checklist item!";
     }
 }
