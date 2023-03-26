@@ -1,5 +1,6 @@
 package com.security.auth.jwt;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.micrometer.common.lang.NonNull;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -30,29 +31,35 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain filterChain)
             throws ServletException, IOException {
-        String authorizationHeader = request.getHeader("Authorization");
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
-            filterChain.doFilter(request, response);
-            return;
-        }
+        try {
+            String authorizationHeader = request.getHeader("Authorization");
+            if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+                filterChain.doFilter(request, response);
+                return;
+            }
 
-        String token = authorizationHeader.substring(7);
-        String username = jwtTokenService.extractUsername(token);
+            String token = authorizationHeader.substring(7);
+            String username = jwtTokenService.extractUsername(token);
 
-        if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-            Optional<Token> optionalJwtToken = jwtTokenRepository.findByToken(token);
-            if (optionalJwtToken.isPresent()) {
-                Token jwtToken = optionalJwtToken.get();
-                if (!jwtToken.isRevoked() && !jwtToken.isExpired()) {
-                    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
-                            userDetails, null, userDetails.getAuthorities());
-                    authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                    SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+            if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                Optional<Token> optionalJwtToken = jwtTokenRepository.findByToken(token);
+                if (optionalJwtToken.isPresent()) {
+                    Token jwtToken = optionalJwtToken.get();
+                    if (!jwtToken.isRevoked() && !jwtToken.isExpired()) {
+                        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(
+                                userDetails, null, userDetails.getAuthorities());
+                        authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
+                    }
                 }
             }
+        } catch (Exception e) {
+            // Handle the expired JWT exception here
+            // Return an HTTP response with a 401 Unauthorized status code
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
         }
-
         filterChain.doFilter(request, response);
     }
 }
