@@ -26,9 +26,9 @@ public class EditTaskDTO {
 
     private boolean important;
 
-    private LocalDateTime startDate;
+    private String startDate;
 
-    private LocalDateTime dueDate;
+    private String dueDate;
 
 }
 

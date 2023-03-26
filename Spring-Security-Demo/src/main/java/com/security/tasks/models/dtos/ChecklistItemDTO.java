@@ -1,15 +1,16 @@
 package com.security.tasks.models.dtos;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CheckTaskDTO {
+public class ChecklistItemDTO {
     private Long id;
     private String title;
-    private String description;
     private boolean completed;
 }
