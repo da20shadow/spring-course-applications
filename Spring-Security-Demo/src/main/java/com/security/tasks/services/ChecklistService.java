@@ -95,4 +95,13 @@ public class ChecklistService {
         return new EditChecklistItemSuccessResponseDTO(TaskMessages.SuccessMessages.UPDATE_CHECKLIST_ITEM_SUCCESS,updatedItem);
     }
 
+    public SuccessResponseDTO markAllAsCompleted(Long taskId, Long userId) {
+        List<ChecklistItem> checklistItems = checklistItemRepository.findByTaskIdAndUserId(taskId, userId);
+        for (ChecklistItem item : checklistItems) {
+            item.setCompleted(true);
+        }
+        checklistItemRepository.saveAll(checklistItems);
+        return new SuccessResponseDTO("All checklist items marked as completed");
+    }
+
 }
