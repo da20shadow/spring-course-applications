@@ -2,6 +2,7 @@ package com.security.tasks.controllers;
 
 import com.security.auth.user.models.entities.User;
 import com.security.shared.models.dtos.ErrorResponseDTO;
+import com.security.shared.models.dtos.SuccessResponseDTO;
 import com.security.tasks.constants.TaskMessages;
 import com.security.tasks.models.dtos.AddTaskDTO;
 import com.security.tasks.models.dtos.EditTaskDTO;
@@ -78,9 +79,19 @@ public class TaskController {
         try {
             User user = (User) authentication.getPrincipal();
             taskService.deleteTask(id, user.getId());
-            return ResponseEntity.ok(TaskMessages.SuccessMessages.DELETE_SUCCESS);
+            return ResponseEntity.ok(new SuccessResponseDTO(TaskMessages.SuccessMessages.DELETE_SUCCESS));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorResponseDTO(TaskMessages.ErrorMessages.DELETE_ERROR));
+        }
+    }
+
+    @GetMapping("/today")
+    public ResponseEntity<?> getAllTasksWithEndDateToday(Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(taskService.getTasksWithEndDateToday(user.getId()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorResponseDTO(TaskMessages.ErrorMessages.NO_TODAY_TASKS));
         }
     }
 
