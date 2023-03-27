@@ -15,6 +15,7 @@ public class TaskMessages {
         public static final String DUPLICATE_CHECKLIST_ITEM_TITLE_ERROR = "Item with such title already added!";
         public static final String CHECKLIST_ITEM_NOT_FOUND = "Checklist item not found!";
         public static final String NO_CHANGE = "There is no any change!";
+        public static final String NO_TODAY_TASKS = "No tasks for today.";
     }
 
     public static class SuccessMessages {
