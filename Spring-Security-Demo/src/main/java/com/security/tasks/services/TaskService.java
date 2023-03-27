@@ -1,6 +1,7 @@
 package com.security.tasks.services;
 
 import com.security.auth.user.models.entities.User;
+import com.security.shared.models.dtos.SuccessResponseDTO;
 import com.security.targets.constants.TargetMessages;
 import com.security.targets.exceptions.TargetNotFoundException;
 import com.security.targets.models.entities.Target;
@@ -20,11 +21,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -40,7 +44,7 @@ public class TaskService {
         task.setUser(user);
 
         if (addTaskDTO.getTargetId() != null) {
-            Optional<Task> existTask = taskRepository.findByTitleAndTargetIdAndUserId(addTaskDTO.getTitle(),addTaskDTO.getTargetId(), user.getId());
+            Optional<Task> existTask = taskRepository.findByTitleAndTargetIdAndUserId(addTaskDTO.getTitle(), addTaskDTO.getTargetId(), user.getId());
             if (existTask.isPresent()) {
                 throw new DuplicateTaskTitleException(TaskMessages.ErrorMessages.DUPLICATE_TITLE_ERROR);
             }
@@ -48,7 +52,7 @@ public class TaskService {
             Optional<Target> optionalTarget = targetRepository.findByIdAndUserId(addTaskDTO.getTargetId(), user.getId());
             if (optionalTarget.isPresent()) {
                 task.setTarget(optionalTarget.get());
-            }else {
+            } else {
                 throw new TargetNotFoundException(TargetMessages.ErrorMessages.NOT_FOUND);
             }
         }
@@ -92,13 +96,21 @@ public class TaskService {
         }
 
         if (editTaskDTO.getStartDate() != null) {
-            LocalDateTime startDate = LocalDateTime.parse(editTaskDTO.getStartDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-            task.setStartDate(startDate);
+            if (editTaskDTO.getStartDate().equals("clear")) {
+                task.setStartDate(null);
+            } else {
+                LocalDateTime startDate = LocalDateTime.parse(editTaskDTO.getStartDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+                task.setStartDate(startDate);
+            }
         }
 
         if (editTaskDTO.getDueDate() != null) {
-            LocalDateTime dueDate = LocalDateTime.parse(editTaskDTO.getDueDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
-            task.setDueDate(dueDate);
+            if (editTaskDTO.getDueDate().equals("clear")) {
+                task.setDueDate(null);
+            } else {
+                LocalDateTime dueDate = LocalDateTime.parse(editTaskDTO.getDueDate(), DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+                task.setDueDate(dueDate);
+            }
         }
 
 
@@ -142,6 +154,12 @@ public class TaskService {
         return toTaskDTO(optionalTask.get());
     }
 
+    public List<TaskDTO> getTasksWithEndDateToday(Long userId) {
+        LocalDate today = LocalDate.now();
+        List<Task> todayTasks = taskRepository.findAllByDueDateAndUserId(today,userId);
+        return todayTasks.stream().map(t -> modelMapper.map(t,TaskDTO.class)).collect(Collectors.toList());
+    }
+
     private TaskDTO toTaskDTO(Task task) {
         TaskDTO.TaskDTOBuilder taskBuilder = TaskDTO.builder()
                 .id(task.getId())
@@ -160,5 +178,6 @@ public class TaskService {
         }
         return taskBuilder.build();
     }
+
 }
 
