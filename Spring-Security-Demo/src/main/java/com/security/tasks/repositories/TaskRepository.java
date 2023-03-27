@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,4 +38,7 @@ public interface TaskRepository extends JpaRepository<Task,Long> {
     Optional<Task> findByTitleAndUserId(String title, Long userId);
 
     Optional<Task> findByTitleAndTargetIdAndUserId(String title, Long targetId, Long userId);
+
+    @Query("SELECT t FROM Task t JOIN t.user u WHERE FUNCTION('DATE', t.dueDate) = :today AND u.id = :userId")
+    List<Task> findAllByDueDateAndUserId(LocalDate today, Long userId);
 }
