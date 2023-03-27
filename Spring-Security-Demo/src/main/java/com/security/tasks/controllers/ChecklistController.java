@@ -31,6 +31,17 @@ public class ChecklistController {
         }
     }
 
+    @PostMapping("/tasks/{taskId}/complete")
+    public ResponseEntity<?> markAllAsCompleted(@PathVariable Long taskId,
+                                              Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok().body(checklistService.markAllAsCompleted(taskId, user.getId()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorResponseDTO(e.getMessage()));
+        }
+    }
+
     @PatchMapping("/{itemId}")
     public ResponseEntity<?> editChecklistItem(@PathVariable Long itemId,
                                                @Valid @RequestBody EditChecklistItemDTO item, BindingResult result,

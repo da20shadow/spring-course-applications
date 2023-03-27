@@ -14,4 +14,6 @@ public interface ChecklistRepository extends JpaRepository<ChecklistItem,Long> {
     Optional<ChecklistItem> findByTitleAndTaskIdAndUserId(String title, Long taskId, Long userId);
 
     Optional<ChecklistItem> findByIdAndUserId(Long itemId, Long userId);
+
+    List<ChecklistItem> findByTaskIdAndUserId(Long taskId, Long userId);
 }
