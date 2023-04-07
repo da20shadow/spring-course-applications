@@ -68,6 +68,7 @@ public class TargetController {
             User user = (User) authentication.getPrincipal();
             return ResponseEntity.ok(targetService.getTargetById(targetId, user.getId()));
         } catch (Exception e) {
+            System.out.println(e.toString());
             return ResponseEntity.badRequest().body(new ErrorResponseDTO(e.getMessage()));
         }
     }

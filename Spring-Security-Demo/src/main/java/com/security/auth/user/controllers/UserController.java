@@ -1,7 +1,10 @@
 package com.security.auth.user.controllers;
 
 import com.security.auth.config.LogoutService;
+import com.security.auth.jwt.JwtService;
 import com.security.auth.user.models.dtos.EditProfileDTO;
+import com.security.auth.user.models.dtos.UserDTO;
+import com.security.auth.user.models.dtos.UserProfileDTO;
 import com.security.auth.user.services.UserService;
 import com.security.shared.models.dtos.ErrorResponseDTO;
 import com.security.shared.models.dtos.SuccessResponseDTO;
@@ -24,12 +27,17 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
 
+    private final JwtService jwtService;
+
     private final UserService userService;
 
     @GetMapping("/profile")
     public ResponseEntity<?> getProfileInfo(@AuthenticationPrincipal UserDetails userDetails) {
         try {
-            return ResponseEntity.ok(userService.getProfile(userDetails.getUsername()));
+            String email = userDetails.getUsername();
+            UserDTO user = userService.getProfile(email);
+            String token = jwtService.generateToken(userDetails);
+            return ResponseEntity.ok(new UserProfileDTO(user.getFirstName(), user.getEmail(), true, token));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorResponseDTO(e.getMessage()));
         }

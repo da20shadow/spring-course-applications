@@ -4,9 +4,12 @@ import com.security.auth.user.models.entities.User;
 import com.security.goals.constants.GoalMessages;
 import com.security.goals.exceptions.DuplicateGoalException;
 import com.security.goals.exceptions.GoalNotFoundException;
+import com.security.goals.exceptions.GoalNotUpdatedException;
 import com.security.goals.models.dtos.AddGoalDTO;
 import com.security.goals.models.dtos.GoalDTO;
+import com.security.goals.models.dtos.UpdateGoalDTO;
 import com.security.goals.models.entities.Goal;
+import com.security.goals.models.enums.GoalCategory;
 import com.security.goals.repositories.GoalRepository;
 import com.security.ideas.repositories.IdeaRepository;
 import com.security.shared.models.dtos.SuccessResponseDTO;
@@ -21,6 +24,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -43,6 +47,36 @@ public class GoalService {
         goal.setCreatedAt(LocalDateTime.now());
         Goal createdGoal = goalRepository.save(goal);
         return modelMapper.map(createdGoal, GoalDTO.class);
+    }
+
+    @Transactional
+    public GoalDTO update(Long goalId,User user, UpdateGoalDTO updateGoalDTO) throws Exception {
+        Optional<Goal> optionalGoal = goalRepository.findByIdAndUserId(goalId, user.getId());
+        if (optionalGoal.isEmpty()) {
+            throw new DuplicateGoalException(GoalMessages.ErrorGoalMessages.NOT_FOUND);
+        }
+        if (goalRepository.existsByTitleAndUser_Id(updateGoalDTO.getTitle(), user.getId())) {
+            throw new DuplicateGoalException(GoalMessages.ErrorGoalMessages.DUPLICATE_TITLE_ERROR);
+        }
+        Goal goal = optionalGoal.get();
+        boolean hasUpdate = false;
+        if (updateGoalDTO.getTitle() != null) {
+            goal.setTitle(updateGoalDTO.getTitle());
+            hasUpdate = true;
+        }
+        if (updateGoalDTO.getDescription() != null) {
+            goal.setDescription(updateGoalDTO.getDescription());
+            hasUpdate = true;
+        }
+        if (updateGoalDTO.getDeadline() != null) {
+            LocalDate deadline = LocalDate.parse(updateGoalDTO.getDeadline());
+            goal.setDeadline(deadline);
+            hasUpdate = true;
+        }
+        if (!hasUpdate) {
+            throw new GoalNotUpdatedException(GoalMessages.ErrorGoalMessages.NO_CHANGES);
+        }
+        return getGoalById(goalId, user.getId());
     }
 
     @Transactional
@@ -79,6 +113,41 @@ public class GoalService {
                     .build();
         });
 //        return goalsPage.map(this::getGoalDTOWithCompletedTargetsAndTotalTargets);
+    }
+
+    @Transactional
+    public Page<GoalDTO> getAllUserGoalsByCategory(Long userId, GoalCategory category, Pageable pageable) {
+        Page<Goal> goalsPage = goalRepository.findByUserIdAndCategory(userId, category,pageable);
+        return goalsPage.map(goal -> {
+
+            Set<Target> targets = goal.getTargets();
+            int totalCompletedTargets = 0;
+
+            for (Target target : targets) {
+                List<Task> tasks = target.getTasks();
+                int totalCompletedTasks = 0;
+                for (Task task : tasks) {
+                    if (task.getStatus().getStatusName().equals("Completed")) {
+                        totalCompletedTasks++;
+                    }
+                }
+                if (tasks.size() > 0 && totalCompletedTasks == tasks.size()) {
+                    totalCompletedTargets++;
+                }
+            }
+
+            return GoalDTO.builder()
+                    .id(goal.getId())
+                    .title(goal.getTitle())
+                    .description(goal.getDescription())
+                    .category(goal.getCategory())
+                    .createdAt(goal.getCreatedAt())
+                    .deadline(goal.getDeadline())
+                    .targets(new HashSet<>())
+                    .totalTargets(targets.size())
+                    .totalCompletedTargets(totalCompletedTargets)
+                    .build();
+        });
     }
 
     @Transactional

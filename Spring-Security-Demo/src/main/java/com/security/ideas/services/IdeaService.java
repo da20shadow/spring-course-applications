@@ -15,6 +15,7 @@ import com.security.ideas.models.entities.Tag;
 import com.security.ideas.repositories.IdeaRepository;
 import com.security.ideas.repositories.TagRepository;
 import com.security.shared.models.dtos.SuccessResponseDTO;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -94,26 +95,24 @@ public class IdeaService {
         boolean isThereChange = false;
 
         // Update the title, if provided in the DTO
-        String newTitle = editIdeaDTO.getTitle();
-        if (newTitle != null && !newTitle.equals(idea.getTitle())) {
-            Optional<Idea> existingIdeaWithTitle = ideaRepository.findByTitle(newTitle);
+        if (editIdeaDTO.getTitle() != null && !editIdeaDTO.getTitle().equals(idea.getTitle())) {
+            Optional<Idea> existingIdeaWithTitle = ideaRepository.findByTitle(editIdeaDTO.getTitle());
             if (existingIdeaWithTitle.isPresent()) {
                 throw new DuplicateIdeaException(IdeaMessages.IdeaErrorMessages.DUPLICATE_TITLE_ERROR);
             }
-            idea.setTitle(newTitle);
+            idea.setTitle(editIdeaDTO.getTitle());
             isThereChange = true;
         }
 
         // Update the description, if provided in the DTO
-        String newDescription = editIdeaDTO.getDescription();
-        if (newDescription != null) {
-            idea.setDescription(newDescription);
+        if (editIdeaDTO.getDescription() != null) {
+            idea.setDescription(editIdeaDTO.getDescription());
             isThereChange = true;
         }
 
         // Update the tags, if provided in the DTO
-        Set<String> newTagNames = editIdeaDTO.getTags();
-        if (newTagNames != null) {
+        if (editIdeaDTO.getTags() != null && !editIdeaDTO.getTags().isEmpty()) {
+            Set<String> newTagNames = editIdeaDTO.getTags();
             Set<Tag> newTags = new HashSet<>();
             for (String newTagName : newTagNames) {
                 // Check if there is an existing tag with the same name

@@ -6,9 +6,7 @@ import com.security.goals.exceptions.GoalNotFoundException;
 import com.security.goals.models.entities.Goal;
 import com.security.goals.repositories.GoalRepository;
 import com.security.targets.constants.TargetMessages;
-import com.security.targets.exceptions.DuplicateTargetException;
-import com.security.targets.exceptions.TargetNotFoundException;
-import com.security.targets.exceptions.TargetNotUpdatedException;
+import com.security.targets.exceptions.*;
 import com.security.targets.models.dtos.*;
 import com.security.targets.models.entities.Target;
 import com.security.targets.repositories.TargetRepository;
@@ -35,30 +33,34 @@ public class TargetService {
     //Create new target
     public AddTargetSuccessResponseDTO add(User user, AddTargetDTO addTargetDTO) {
 
-        Goal goal = goalRepository.findByIdAndUserId(addTargetDTO.getGoalId(), user.getId())
-                .orElseThrow(() -> new GoalNotFoundException(GoalMessages.ErrorGoalMessages.NOT_FOUND));
+        try {
+            Goal goal = goalRepository.findByIdAndUserId(addTargetDTO.getGoalId(), user.getId())
+                    .orElseThrow(() -> new GoalNotFoundException(GoalMessages.ErrorGoalMessages.NOT_FOUND));
 
-        Optional<Target> existingTarget = targetRepository.findByTitleAndGoalIdAndUserId(addTargetDTO.getTitle(), goal.getId(), user.getId());
+            Optional<Target> existingTarget = targetRepository.findByTitleAndGoalIdAndUserId(addTargetDTO.getTitle(), goal.getId(), user.getId());
 
-        if (existingTarget.isPresent()) {
-            throw new DuplicateTargetException(TargetMessages.ErrorMessages.DUPLICATE_TARGET);
+            if (existingTarget.isPresent()) {
+                throw new DuplicateTargetException(TargetMessages.ErrorMessages.DUPLICATE_TARGET);
+            }
+
+            Target target = Target.builder()
+                    .title(addTargetDTO.getTitle())
+                    .description(addTargetDTO.getDescription())
+                    .createdAt(LocalDateTime.now())
+                    .user(user)
+                    .goal(goal)
+                    .build();
+
+            Target addedTarget = targetRepository.save(target);
+
+            TargetDTO targetDTO = modelMapper.map(addedTarget, TargetDTO.class);
+
+            return new AddTargetSuccessResponseDTO(
+                    TargetMessages.SuccessMessages.ADD_SUCCESS,
+                    targetDTO);
+        } catch (Exception e) {
+            throw new CanNotAddTargetException(TargetMessages.ErrorMessages.ADD_ERROR);
         }
-
-        Target target = Target.builder()
-                .title(addTargetDTO.getTitle())
-                .description(addTargetDTO.getDescription())
-                .createdAt(LocalDateTime.now())
-                .user(user)
-                .goal(goal)
-                .build();
-
-        Target addedTarget = targetRepository.save(target);
-
-        TargetDTO targetDTO = modelMapper.map(addedTarget, TargetDTO.class);
-
-        return new AddTargetSuccessResponseDTO(
-                TargetMessages.SuccessMessages.ADD_SUCCESS,
-                targetDTO);
     }
 
     //Update Target
@@ -84,11 +86,16 @@ public class TargetService {
 
         Target updatedTarget = targetRepository.save(target);
 
-        TargetDTO updatedTargetDTO = modelMapper.map(updatedTarget, TargetDTO.class);
+        TargetDTO updatedTargetDTO = TargetDTO.builder()
+                .id(updatedTarget.getId())
+                .title(updatedTarget.getTitle())
+                .description(updatedTarget.getDescription())
+                .build();
 
         return new EditTargetSuccessResponseDTO(
                 TargetMessages.SuccessMessages.UPDATED_SUCCESS,
                 updatedTargetDTO);
+
     }
 
     //Get target by id

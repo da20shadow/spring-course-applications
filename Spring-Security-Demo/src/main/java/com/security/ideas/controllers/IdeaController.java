@@ -60,7 +60,6 @@ public class IdeaController {
     public ResponseEntity<?> updateIdea(@PathVariable Long id,
                                         @RequestBody EditIdeaDTO editIdeaDTO,
                                         Authentication authentication) {
-        System.out.println("######################## UPDATE IDEA ##################");
         try {
             User user = (User) authentication.getPrincipal();
             IdeaDTO idea = ideaService.update(id, user.getId(), editIdeaDTO);

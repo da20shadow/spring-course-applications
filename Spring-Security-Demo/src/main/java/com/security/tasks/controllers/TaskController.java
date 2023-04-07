@@ -85,11 +85,21 @@ public class TaskController {
         }
     }
 
+    @GetMapping("/info")
+    public ResponseEntity<?> getTaskInfo(Authentication authentication) {
+        try {
+            User user = (User) authentication.getPrincipal();
+            return ResponseEntity.ok(taskService.getTaskInfo(user.getId()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorResponseDTO(e.getMessage()));
+        }
+    }
+
     @GetMapping("/today")
     public ResponseEntity<?> getAllTasksWithEndDateToday(Authentication authentication) {
         try {
             User user = (User) authentication.getPrincipal();
-            return ResponseEntity.ok(taskService.getTasksWithEndDateToday(user.getId()));
+            return ResponseEntity.ok(taskService.getTodayTasks(user.getId()));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorResponseDTO(TaskMessages.ErrorMessages.NO_TODAY_TASKS));
         }
@@ -121,6 +131,46 @@ public class TaskController {
         }
     }
 
+    @GetMapping("/calendar")
+    public ResponseEntity<?> getMonthTasks(
+            @RequestParam(defaultValue = "0") int year,
+            @RequestParam(defaultValue = "0") int month,
+            Authentication authentication) {
+
+        try {
+            User user = (User) authentication.getPrincipal();
+            if (year == 0) {
+                return ResponseEntity.badRequest().body(new ErrorResponseDTO("Invalid Year!"));
+            }
+            if (month == 0) {
+                return ResponseEntity.badRequest().body(new ErrorResponseDTO("Invalid Month!"));
+            }
+            return ResponseEntity.ok(taskService.getAllTasksForYearAndMonth(user.getId(),year,month));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorResponseDTO(e.getMessage()));
+        }
+    }
+
+    @GetMapping("/week")
+    public ResponseEntity<?> getWeekTasks(
+            @RequestParam(defaultValue = "") String from,
+            @RequestParam(defaultValue = "") String to,
+            Authentication authentication) {
+
+        try {
+            User user = (User) authentication.getPrincipal();
+            if (from.equals("")) {
+                return ResponseEntity.badRequest().body(new ErrorResponseDTO("Invalid Year!"));
+            }
+            if (to.equals("")) {
+                return ResponseEntity.badRequest().body(new ErrorResponseDTO("Invalid Month!"));
+            }
+            return ResponseEntity.ok(taskService.getWeekTasks(user.getId(),from,to));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new ErrorResponseDTO(e.getMessage()));
+        }
+    }
+
     @GetMapping("/important")
     public ResponseEntity<?> getImportantTasks(
             @RequestParam(defaultValue = "0") int page,
@@ -133,9 +183,7 @@ public class TaskController {
             Pageable pageable = PageRequest.of(page,
                     size, Sort.by("important").descending()
                             .and(Sort.by("createdAt").ascending()));
-
-            Page<TaskDTO> tasksPage = taskService.getImportantTasks(user.getId(), pageable);
-            return ResponseEntity.ok(tasksPage);
+            return ResponseEntity.ok(taskService.getImportantTasks(user.getId(), pageable));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new ErrorResponseDTO(e.getMessage()));
         }

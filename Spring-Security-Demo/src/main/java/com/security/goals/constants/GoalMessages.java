@@ -8,6 +8,7 @@ public class GoalMessages {
         public static final String UPDATED_ERROR = "Unable to updated goal!";
         public static final String DELETED_ERROR = "Unable to deleted goal!";
         public static final String DUPLICATE_TITLE_ERROR = "A goal with this title already exists!";
+        public static final String NO_CHANGES = "There are no changes.";
     }
 
     public static class SuccessGoalMessages {
